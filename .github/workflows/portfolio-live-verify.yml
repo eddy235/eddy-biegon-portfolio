@@ -1,0 +1,51 @@
+name: Eddy portfolio live deployment checks
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Check hosted site, API content and admin isolation
+        run: |
+          python - <<'PY'
+          import json
+          import time
+          from urllib.request import urlopen, Request
+          from urllib.error import HTTPError
+          base = "https://eddy-biegon-portfolio.onrender.com"
+          for n in range(8):
+              try:
+                  with urlopen(base+"/health", timeout=20) as response:
+                      health=json.load(response)
+                  if health.get("status")=="ok":
+                      break
+              except Exception as exc:
+                  print("startup check:",str(exc)[:180])
+              time.sleep(12)
+          assert health=={"status":"ok","read_only":True},health
+          for path in ["/","/projects.html","/cyberlab.html","/styles.css","/script.js"]:
+              with urlopen(base+path, timeout=20) as response:
+                  assert response.status==200,(path,response.status)
+                  if path=="/":
+                      html=response.read().decode()
+                      assert "Packet Defender" in html
+          with urlopen(base+"/api/projects", timeout=20) as response:
+              items=json.load(response)
+          for name in ["NexusDesk", "SecureScan", "KNLS", "Mint Dental"]:
+              assert any(name in item["title"] for item in items),name
+          assert sum(bool(item["featured"]) for item in items)>=4
+          for path in ["/admin","/admin/setup","/admin/login","/api/admin/all"]:
+              try:
+                  with urlopen(Request(base+path),timeout=20) as response:
+                      status=response.status
+              except HTTPError as ex:
+                  status=ex.code
+              assert status==404,(path,status)
+          print("PASS: live v6 home, project API, CSS, JS, cybersecurity game and admin protection")
+          PY
