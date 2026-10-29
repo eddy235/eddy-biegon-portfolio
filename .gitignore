@@ -1,0 +1,8 @@
+# Runtime and editor content never belongs in Git
+portfolio.db
+*.db
+*.sqlite3
+__pycache__/
+.pytest_cache/
+.env
+.venv/
