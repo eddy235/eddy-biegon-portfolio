@@ -1,0 +1,24 @@
+# Tulia Care fictional clinic queue demo — standalone free Render service.
+# This is NOT clinical production software. Do not enter real patient information.
+services:
+  - type: web
+    name: tulia-care-demo
+    runtime: python
+    region: frankfurt
+    plan: free
+    repo: https://github.com/eddy235/eddy-biegon-portfolio
+    branch: main
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn clinic.app:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: CLINIC_STAFF_PASSWORD
+        sync: false
+      - key: CLINIC_SECRET
+        generateValue: true
+      - key: CLINIC_COOKIE_SECURE
+        value: "1"
+      - key: CLINIC_SEED_DEMO
+        value: "1"
+      - key: PYTHON_VERSION
+        value: "3.12.8"
