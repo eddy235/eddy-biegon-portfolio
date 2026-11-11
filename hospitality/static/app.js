@@ -55,6 +55,9 @@ function initOrderApp() {
   let search = "";
   let cart = {};
   let lastOrderCode = "";
+  let paymentId = null;
+  let paymentMode = "demo";
+  let paymentPoll = null;
   try {
     const stored = JSON.parse(localStorage.getItem("maison-cart-v1") || "{}");
     if (stored && typeof stored === "object" && !Array.isArray(stored)) {
@@ -161,7 +164,7 @@ function initOrderApp() {
     $("cart-subtotal").textContent = fmt(total());
     $("mobile-cart-total").textContent = fmt(total()) + " ↗";
     $("place-order").disabled = !count;
-    $("place-order").textContent = count ? "Place demo order ↗" : "Choose something first";
+    $("place-order").textContent = count ? "Pay with M-Pesa ↗" : "Choose something first";
   }
   function toggleCart(open) {
     document.body.classList.toggle("cart-open", open);
@@ -186,13 +189,40 @@ function initOrderApp() {
     $("delivery-location").readOnly = type === "pickup";
     $("delivery-location").value = type === "pickup" ? "Collection desk" : "";
   });
+
+  function setPaymentText(text,success=false) {
+    $("payment-outcome").textContent = text;
+    $("payment-outcome").style.color = success ? "#285a3d" : "#845b37";
+  }
+  async function loadPaymentMode() {
+    try {
+      const config = await api("/api/payments/config");
+      paymentMode = config.mode;
+      $("mpesa-mode-note").textContent = paymentMode === "demo" ?
+        "DEMO MODE — a mock M-Pesa approval appears here. No real phone prompt or money transfer occurs." :
+        paymentMode === "sandbox" ?
+        "DARAJA SANDBOX — request a test STK Push. No live payment is charged." :
+        "LIVE DARAJA — an STK payment prompt will be sent to your M-Pesa phone.";
+    } catch (err) {
+      $("mpesa-mode-note").textContent = "Payment mode unavailable — checkout may be offline.";
+    }
+  }
+  function paymentComplete(message) {
+    $("mpesa-form").hidden = true;
+    $("approve-demo").hidden = true;
+    $("mpesa-instructions").hidden = false;
+    $("mpesa-instructions").textContent = message;
+    $("success-title").textContent = "Payment step complete.";
+    setPaymentText(message,true);
+    if (paymentPoll) window.clearInterval(paymentPoll);
+  }
   $("checkout-form").addEventListener("submit", async event => {
     event.preventDefault();
     showError(checkoutError, "");
     if (!itemsInCart()) return;
     const submit = $("place-order");
     submit.disabled = true;
-    submit.textContent = "Placing order…";
+    submit.textContent = "Reserving order…";
     const payload = {
       guest_name: $("guest-name").value.trim(),
       delivery_type: $("delivery-type").value,
@@ -203,18 +233,29 @@ function initOrderApp() {
     try {
       const placed = await api("/api/orders", jsonOptions(payload));
       lastOrderCode = placed.code;
+      paymentId = null;
       cart = {};
       saveCart();
       $("checkout-form").reset();
       $("delivery-location").readOnly = false;
       $("location-label").textContent = "Room number";
       $("success-code").textContent = lastOrderCode;
-      $("success-total").textContent = "Demo order value: " + fmt(placed.total);
+      $("success-total").textContent = "Amount to pay: " + fmt(placed.total);
+      $("success-title").textContent = "One more step.";
+      $("success-intro").textContent = "Your order is reserved. Enter your M-Pesa phone number to request payment.";
       $("tracking-message").textContent = "";
+      $("mpesa-instructions").textContent = "";
+      $("mpesa-instructions").hidden = true;
+      $("mpesa-form").hidden = false;
+      $("approve-demo").hidden = true;
+      $("mpesa-phone").value = "";
+      setPaymentText("");
+      showError($("mpesa-error"), "");
       $("success-modal").hidden = false;
       document.body.classList.remove("cart-open");
       $("cart-backdrop").hidden = true;
-      $("track-new-order").focus();
+      await loadPaymentMode();
+      $("mpesa-phone").focus();
       await loadMenu();
     } catch (err) {
       showError(checkoutError, err.message);
@@ -222,6 +263,66 @@ function initOrderApp() {
     } finally {
       renderCart();
     }
+  });
+  $("mpesa-form").addEventListener("submit", async event => {
+    event.preventDefault();
+    showError($("mpesa-error"), "");
+    const submit = $("send-stk");
+    submit.disabled = true;
+    submit.textContent = paymentMode === "demo" ? "Preparing demo prompt…" : "Requesting phone prompt…";
+    try {
+      const response = await api("/api/payments/mpesa/initiate",jsonOptions({
+        code:lastOrderCode,phone:$("mpesa-phone").value.trim()
+      }));
+      paymentId = response.payment_id;
+      $("mpesa-form").hidden = true;
+      $("mpesa-instructions").hidden = false;
+      $("mpesa-instructions").textContent = response.message;
+      if (response.mode === "demo") {
+        $("success-title").textContent = "Demo M-Pesa prompt";
+        $("approve-demo").hidden = false;
+        setPaymentText("No prompt was sent to this phone. Tap the button below to simulate authorising payment.");
+      } else {
+        $("success-title").textContent = "Check your phone";
+        $("approve-demo").hidden = true;
+        setPaymentText(response.mode === "sandbox" ? "Sandbox request sent. Waiting for test callback." :
+          "Please enter your PIN only in the M-Pesa prompt on your phone. Do not enter it here.");
+        let checks = 0;
+        if (paymentPoll) window.clearInterval(paymentPoll);
+        paymentPoll = window.setInterval(async () => {
+          checks++;
+          try {
+            const latest = await api("/api/payments/mpesa/status/"+encodeURIComponent(lastOrderCode));
+            if (latest.payment_status === "paid") paymentComplete("M-Pesa payment verified by Daraja. Thank you.");
+            else if (latest.payment_status === "failed") {
+              window.clearInterval(paymentPoll);
+              setPaymentText("M-Pesa payment was declined or cancelled. Contact staff to retry.");
+            }
+          } catch {}
+          if (checks >= 30) {
+            window.clearInterval(paymentPoll);
+            setPaymentText("Still waiting for payment confirmation. Keep your order reference for follow-up.");
+          }
+        },3000);
+      }
+    } catch (err) {
+      showError($("mpesa-error"),err.message);
+    } finally {
+      submit.disabled = false;
+      submit.textContent = "Pay now · Request M-Pesa prompt ↗";
+    }
+  });
+  $("approve-demo").addEventListener("click", async () => {
+    const button=$("approve-demo");
+    button.disabled=true;
+    try {
+      const result = await api("/api/payments/mpesa/confirm-demo",jsonOptions({
+        code:lastOrderCode,payment_id:paymentId
+      }));
+      paymentComplete(result.message);
+    } catch (err) {
+      setPaymentText(err.message);
+    } finally {button.disabled=false;}
   });
   $("track-new-order").addEventListener("click", async () => {
     const message = $("tracking-message");
@@ -234,6 +335,7 @@ function initOrderApp() {
   });
   $("continue-ordering").addEventListener("click", () => {
     $("success-modal").hidden = true;
+    if (paymentPoll) window.clearInterval(paymentPoll);
     $("menu-search").focus();
   });
   async function loadMenu() {
@@ -274,7 +376,7 @@ function initStaffApp() {
     button.disabled = true;
     button.textContent = "Checking credentials…";
     try {
-      await api("/api/staff/login", jsonOptions({password:$("staff-password").value}));
+      await api("/api/staff/login", jsonOptions({username:$("staff-username").value.trim(),password:$("staff-password").value}));
       $("staff-password").value = "";
       await refresh();
     } catch (err) {
@@ -302,9 +404,90 @@ function initStaffApp() {
     });
     $("orders-view").hidden = selectedTab !== "orders";
     $("inventory-view").hidden = selectedTab !== "inventory";
+    $("kitchen-view").hidden = selectedTab !== "kitchen";
+    $("team-view").hidden = selectedTab !== "team";
+    if (selectedTab === "team") loadTeam();
   }));
   $("stock-search").addEventListener("input", () => renderStock());
+  $("create-staff-form").addEventListener("submit", async event => {
+    event.preventDefault();
+    try {
+      const response = await api("/api/staff/users",jsonOptions({
+        username:$("new-staff-username").value.trim(),
+        password:$("new-staff-password").value,
+        role:$("new-staff-role").value
+      }));
+      $("staff-team-message").textContent = "Created staff account " + response.username + ". Share the temporary password privately.";
+      event.target.reset();
+      loadTeam();
+    } catch (err) {$("staff-team-message").textContent=err.message;}
+  });
+  async function loadTeam() {
+    if (!snapshot || snapshot.user.role !== "manager")return;
+    const host=$("staff-members");
+    try {
+      const users=await api("/api/staff/users");
+      host.replaceChildren();
+      users.forEach(person => {
+        const card=node("article","team-member");
+        const info=node("div");
+        info.append(node("strong","",person.username));
+        info.append(node("small","",person.role+" · "+(person.active?"Active":"Inactive")));
+        const button=node("button","",person.active?"Deactivate":"Reactivate");
+        button.type="button";
+        button.disabled = person.id === snapshot.user.id;
+        button.addEventListener("click",async()=>{
+          button.disabled=true;
+          try {
+            await api("/api/staff/users/"+person.id+"/active",jsonOptions({active:!person.active}));
+            await loadTeam();
+          } catch(err) {
+            $("staff-team-message").textContent=err.message;button.disabled=false;
+          }
+        });
+        card.append(info,button);host.append(card);
+      });
+    } catch(err){$("staff-team-message").textContent=err.message;}
+  }
+  function renderKitchen() {
+    const host=$("kitchen-orders");
+    host.replaceChildren();
+    const pending=snapshot.orders.filter(order=>order.status!=="served").slice(0,36);
+    if (!pending.length) {host.append(node("p","muted","Kitchen is clear — no active tickets."));return;}
+    const next={received:"preparing",preparing:"ready",ready:"served"};
+    pending.forEach(order=>{
+      const ticket=node("article","kitchen-ticket "+order.status);
+      const top=node("div","kitchen-top");
+      top.append(node("strong","",order.code.slice(0,10)));
+      top.append(node("span","",order.delivery_type+" · "+order.location));
+      ticket.append(top,node("h3","",order.guest_name));
+      ticket.append(node("div","kitchen-payment","M-Pesa: "+order.payment_status.replaceAll("_"," ")));
+      const items=node("div","kitchen-items");
+      order.items.forEach(line=>items.append(node("div","",line.quantity+" × "+line.name)));
+      ticket.append(items);
+      const advance=node("button","","Mark "+next[order.status]+" ↗");
+      advance.type="button";
+      advance.addEventListener("click",async()=>{
+        advance.disabled=true;
+        try {
+          await api("/api/staff/orders/"+order.id+"/status",jsonOptions({status:next[order.status]}));
+          await refresh();
+        } catch(err){notify(err.message,true);advance.disabled=false;}
+      });
+      ticket.append(advance);
+      host.append(ticket);
+    });
+  }
+
   function renderStats() {
+    $("staff-identity").textContent = snapshot.user.username + " · " + snapshot.user.role;
+    const manager=snapshot.user.role==="manager";
+    document.querySelector('[data-tab="inventory"]').hidden=!manager;
+    $("team-tab").hidden=!manager;
+    if (!manager && (selectedTab === "inventory" || selectedTab === "team")) {
+      selectedTab="kitchen";
+      document.querySelector('[data-tab="kitchen"]').click();
+    }
     $("stat-orders").textContent = snapshot.stats.orders;
     $("stat-active").textContent = snapshot.stats.active;
     $("stat-revenue").textContent = fmt(snapshot.stats.revenue);
@@ -337,7 +520,7 @@ function initStaffApp() {
         card.append(line);
       });
       const bottom = node("div", "staff-order-footer");
-      const status = node("span", "status-badge " + order.status, order.status);
+      const status = node("span", "status-badge " + order.status, order.status + " · M-Pesa: " + order.payment_status.replaceAll("_", " "));
       const button = node("button", "", next[order.status] ? "Mark " + next[order.status] + " ↗" : "Completed");
       button.type = "button";
       button.disabled = !next[order.status];
@@ -414,7 +597,9 @@ function initStaffApp() {
       showDashboard(true);
       renderStats();
       renderOrders();
+      renderKitchen();
       renderStock();
+      if (selectedTab === "team") loadTeam();
     } catch (err) {
       if (/login|required|401/i.test(err.message)) showDashboard(false);
       else if (!dashboard.hidden) notify(err.message, true);
