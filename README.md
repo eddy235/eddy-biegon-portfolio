@@ -86,3 +86,7 @@ Do not commit `.env`, `portfolio.db`, passwords, or operational data. The public
 The homepage is a compact introduction with two selected project links, projects/contact buttons and CV access. Detailed capabilities and the GitHub feed remain on About. At the tested desktop viewport, the full homepage fits without vertical scrolling; narrow layouts use responsive cards and a collapsible navigation menu.
 Packet Defender is on `/game.html`; `/game` and `/packet-defender` redirect there. The red navigation button pulses gently and stops animating when reduced motion is requested. Explicit SAFE/THREAT text, keyboard controls and a Stop button improve game access.
 Contact inputs have visible labels, and the optional email is included in the WhatsApp message draft.
+
+
+## Services and pricing
+`/services.html` (also `/services`) lists business websites from KSh 25,000, internal business tools from KSh 65,000 and Python application support from KSh 10,000. Optional website maintenance is KSh 3,000 per month. USD figures are indicative conversions using the CBK rate of KSh 129.96/USD dated 10 November 2026; update the page's figures and dated source note together when repricing. Package links select the relevant enquiry on Contact, using a fixed list of service identifiers. No enquiry is submitted until the visitor continues on WhatsApp and sends it there.

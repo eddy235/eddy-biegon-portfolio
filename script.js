@@ -67,11 +67,18 @@ loadGithub();
 
 // Smart contact form: no backend, opens WhatsApp with entered message
 const form=qs('#contact-form');
+const serviceEnquiries={
+  'business-websites':['Business websites','I would like a quote for a business website. My business is: \nPages or features I need: \nPreferred timeline: '],
+  'internal-business-tools':['Internal business tools','I would like a quote for an internal business tool. The workflow I want to improve is: \nWho will use it: \nPreferred timeline: '],
+  'python-application-support':['Python application support','I need help with a Python application. The task or issue is: \nMy current setup: \nPreferred timeline: '],
+  'website-maintenance':['Website maintenance','I am interested in monthly website maintenance at KSh 3,000 (approximately US$23.08). My website is: \nMy maintenance needs are: ']
+};
+if(form){const service=serviceEnquiries[new URLSearchParams(location.search).get('service')];if(service){const note=qs('#service-enquiry-note');if(note){note.textContent='Enquiring about: '+service[0];note.hidden=false;}const message=qs('#contact-message');if(message&&!message.value)message.value=service[1];}}
 if(form){form.addEventListener('submit',e=>{e.preventDefault();const fd=new FormData(form);const name=fd.get('name')||'there',msg=fd.get('message')||'I would like to connect.',email=String(fd.get('email')||'').trim();const url=`https://wa.me/254717697883?text=${encodeURIComponent(`Hi Eddy, I’m ${name}. ${msg}${email?' Email: '+email:''}`)}`;window.open(url,'_blank','noopener');});}
 
 // Command palette Ctrl/Cmd + K
 const palette=document.createElement('div');palette.className='command-palette';palette.innerHTML='<div class="command-box"><input id="command-input" placeholder="Type a page or action…" autocomplete="off"><div class="command-list"></div><small>Esc to close · Enter to open</small></div>';document.body.appendChild(palette);
-const commands=[['Home','index.html'],['Play Packet Defender','game.html'],['About','about.html'],['Experience','experience.html'],['Projects','projects.html'],['Cyber Lab','cyberlab.html'],['Certifications','certifications.html'],['Contact','contact.html'],['GitHub','https://github.com/eddy235'],['TryHackMe','https://tryhackme.com/p/EddyB']];
+const commands=[['Home','index.html'],['Play Packet Defender','game.html'],['About','about.html'],['Experience','experience.html'],['Projects','projects.html'],['Services & pricing','services.html'],['Cyber Lab','cyberlab.html'],['Certifications','certifications.html'],['Contact','contact.html'],['GitHub','https://github.com/eddy235'],['TryHackMe','https://tryhackme.com/p/EddyB']];
 const input=qs('#command-input'),list=qs('.command-list');let visible=commands;
 function renderCommands(){const q=input.value.toLowerCase();visible=commands.filter(c=>c[0].toLowerCase().includes(q));list.innerHTML=visible.map((c,i)=>`<button data-url="${c[1]}" class="${i===0?'selected':''}">${c[0]} <span>↗</span></button>`).join('');}
 function togglePalette(open){palette.classList.toggle('open',open);if(open){input.value='';renderCommands();setTimeout(()=>input.focus(),50)}}

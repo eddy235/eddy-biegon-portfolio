@@ -23,7 +23,7 @@ class PortfolioReleaseTests(unittest.TestCase):
         shutil.rmtree(_TMP, ignore_errors=True)
 
     def test_pages_assets_and_game_preserved(self):
-        for route in ('/', '/index.html', '/projects.html', '/cyberlab.html', '/about.html', '/contact.html', '/game.html', '/styles.css', '/script.js', '/EDDY_BIEGON_CV.docx'):
+        for route in ('/', '/index.html', '/projects.html', '/cyberlab.html', '/about.html', '/contact.html', '/game.html', '/services.html', '/styles.css', '/script.js', '/EDDY_BIEGON_CV.docx'):
             self.assertEqual(self.client.get(route).status_code, 200, route)
         html=self.client.get('/').text
         self.assertIn('href="game.html"', html)
@@ -59,10 +59,11 @@ if __name__ == '__main__': unittest.main()
 class NavigationTests(unittest.TestCase):
     def test_game_navigation_and_legacy_routes(self):
         with TestClient(portfolio.app) as client:
-            for page in ['index','about','experience','projects','cyberlab','certifications','contact','game']:
+            for page in ['index','about','experience','projects','cyberlab','certifications','contact','game','services']:
                 html=client.get('/'+page+'.html').text
                 self.assertIn('class="nav-game"',html)
                 self.assertIn('href="game.html"',html)
+                self.assertIn('href="services.html"',html)
                 self.assertIn('aria-controls="primary-navigation"',html)
             for route in ['/game','/packet-defender']:
                 result=client.get(route)

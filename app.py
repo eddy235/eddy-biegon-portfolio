@@ -412,7 +412,7 @@ def admin_page(request: Request, error: Optional[int] = None, setup_error: Optio
 def home():
     return FileResponse(BASE_DIR / "index.html")
 
-for page in ["index.html", "about.html", "experience.html", "projects.html", "cyberlab.html", "certifications.html", "contact.html", "game.html"]:
+for page in ["index.html", "about.html", "experience.html", "projects.html", "cyberlab.html", "certifications.html", "contact.html", "game.html", "services.html"]:
     path = "/" + page
     app.add_api_route(path, lambda p=page: FileResponse(BASE_DIR / p), methods=["GET"], include_in_schema=False)
 
@@ -426,3 +426,8 @@ for name in ["styles.css", "script.js", "admin.css", "admin.js", "EDDY_BIEGON_CV
 @app.get("/packet-defender", include_in_schema=False)
 def game_page():
     return RedirectResponse("/game.html", status_code=307)
+
+
+@app.get("/services", include_in_schema=False)
+def services_page():
+    return RedirectResponse("/services.html", status_code=307)
