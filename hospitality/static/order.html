@@ -20,16 +20,36 @@
 <div class="menu-smallprint">All prices are illustrative and in Kenyan shillings. Images are for presentation only.</div>
 </div>
 <aside class="cart-column" aria-label="Shopping basket"><div class="cart-panel" id="cart-panel"><div class="cart-panel-heading"><div><span class="eyebrow">YOUR SELECTION</span><h2>Your basket <span class="cart-count" id="cart-count">0</span></h2></div><button class="close-cart" id="close-cart" type="button" aria-label="Close basket">✕</button></div><div class="cart-items" id="cart-items"><div class="empty-cart">Your next favourite starts here.</div></div>
-<div class="cart-totals"><div><span>Subtotal</span><b id="cart-subtotal">KSh 0</b></div><small>No payment is collected in this demo.</small></div>
+<div class="cart-totals"><div><span>Subtotal</span><b id="cart-subtotal">KSh 0</b></div><small>M-Pesa checkout · Demo mode will not charge your phone.</small></div>
 <form id="checkout-form" class="checkout-form"><h3>How would you like it?</h3>
 <label for="guest-name">Your name<input id="guest-name" name="guest_name" placeholder="Your name" minlength="2" maxlength="80" autocomplete="name" required></label>
 <label for="delivery-type">Service type<select id="delivery-type" name="delivery_type"><option value="room">Deliver to room</option><option value="table">Deliver to table</option><option value="pickup">Collect at restaurant</option></select></label>
 <label for="delivery-location"><span id="location-label">Room number</span><input id="delivery-location" name="location" placeholder="e.g. 204" maxlength="30" required></label>
 <label for="order-note">Special instructions <small>(optional)</small><textarea id="order-note" name="note" rows="2" maxlength="240" placeholder="Any dietary preferences or notes?"></textarea></label>
-<p id="checkout-error" class="form-error" role="alert" hidden></p><button class="button button-dark checkout-submit" id="place-order" type="submit" disabled>Place demo order <span>↗</span></button></form>
-<div class="cart-footer-note">Secure, fictional ordering demo · No payment taken</div></div></aside>
+<p id="checkout-error" class="form-error" role="alert" hidden></p><button class="button button-dark checkout-submit" id="place-order" type="submit" disabled>Pay with M-Pesa <span>↗</span></button></form>
+<div class="cart-footer-note">Daraja-ready checkout · Demo payments are clearly simulated</div></div></aside>
 </main>
 <button class="mobile-cart-fab" id="open-cart" type="button"><span>View basket <b id="mobile-cart-count">0</b></span><span id="mobile-cart-total">KSh 0 ↗</span></button><div class="cart-backdrop" id="cart-backdrop" hidden></div>
-<div id="success-modal" class="success-modal" hidden><div class="success-card" role="dialog" aria-modal="true" aria-labelledby="success-title"><div class="success-mark">✓</div><p class="eyebrow">SENT TO THE DEMO KITCHEN</p><h2 id="success-title">Order received!</h2><p>Your order has been created in the demo. Keep this tracking code to follow its progress.</p><div class="tracking-code" id="success-code"></div><p class="success-total" id="success-total"></p><div class="success-actions"><button class="button button-dark" id="track-new-order" type="button">Check order status ↗</button><button class="text-button" id="continue-ordering" type="button">Back to menu</button></div><div id="tracking-message" class="tracking-message" aria-live="polite"></div></div></div>
+<div id="success-modal" class="success-modal" hidden>
+<div class="success-card" role="dialog" aria-modal="true" aria-labelledby="success-title">
+<div class="success-mark">M</div><p class="eyebrow">MAISON SANAA · M-PESA CHECKOUT</p>
+<h2 id="success-title">One more step.</h2>
+<p id="success-intro">Your order is reserved. Enter your M-Pesa phone number to request payment.</p>
+<div class="tracking-code" id="success-code"></div><p class="success-total" id="success-total"></p>
+<form id="mpesa-form" class="mpesa-form">
+<label for="mpesa-phone">M-Pesa phone number
+<input type="tel" id="mpesa-phone" inputmode="tel" autocomplete="tel" placeholder="07XXXXXXXX or 01XXXXXXXX" required maxlength="18"></label>
+<p class="payment-hint" id="mpesa-mode-note" aria-live="polite">Checking payment mode…</p>
+<p class="form-error" id="mpesa-error" role="alert" hidden></p>
+<button type="submit" class="button button-dark" id="send-stk">Pay now · Request M-Pesa prompt ↗</button>
+</form>
+<div id="mpesa-instructions" class="mpesa-instructions" hidden aria-live="polite"></div>
+<button id="approve-demo" type="button" class="button button-dark demo-approve" hidden>Simulate approving the prompt ✓</button>
+<p id="payment-outcome" class="payment-outcome" role="status" aria-live="polite"></p>
+<div class="success-actions"><button class="text-button" id="track-new-order" type="button">Check order status ↗</button>
+<button class="text-button" id="continue-ordering" type="button">Return to menu</button></div>
+<div id="tracking-message" class="tracking-message" aria-live="polite"></div>
+<p class="payment-security-note">Never enter your M-Pesa PIN on a website. A real STK prompt is approved only on your phone.</p>
+</div></div>
 <footer class="order-footer container">MAISON SANAA · <a href="/">Hotel home</a> · <a href="/staff">Staff dashboard</a> · Fictional demo</footer>
 </body></html>

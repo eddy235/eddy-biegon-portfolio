@@ -16,3 +16,41 @@
 @media(max-width:720px){.container{width:calc(100% - 36px)}.site-header .nav-bar{min-height:74px}.brand-icon{height:39px;width:39px;font-size:24px}.brand-words{font-size:13px}.brand-words small{font-size:8px}.mobile-nav-btn{display:block}.nav-links{display:none;position:absolute;left:0;top:100%;width:100%;background:var(--canvas);flex-direction:column;align-items:stretch;padding:15px 24px 25px;gap:14px;box-shadow:0 15px 25px #13251c18}.nav-links.open{display:flex}.nav-links a{padding:5px}.hero{grid-template-columns:1fr;gap:25px;padding-top:20px;padding-bottom:40px}.hero-copy{padding:28px 0 10px}.hero h1{font-size:clamp(45px,13vw,69px);max-width:530px;margin:16px 0}.hero-copy>p:not(.eyebrow){font-size:14px}.hero-actions{gap:22px}.hero-bottom{margin-top:10px;padding-top:22px}.hero-visual,.hero-visual>img{height:380px;min-height:380px}.hero-image-caption{left:12px;bottom:14px;min-width:0;width:calc(100% - 24px);padding:15px}.trust-inner{justify-content:center;flex-wrap:wrap;padding:20px 0;min-height:70px;gap:12px;font-size:9px}.trust-inner span:nth-child(even){display:none}.section{padding-top:65px;padding-bottom:65px}.story-section,.app-feature-inner,.login-screen{grid-template-columns:1fr}.story-section{gap:12px}.story-section h2{font-size:42px}.story-content{padding-top:0}.story-content p{font-size:14px}.section-heading{display:block}.section-heading h2{font-size:43px}.section-heading>p{width:auto;margin-top:16px;font-size:13px}.room-grid{grid-template-columns:1fr}.room-card,.room-card.room-big{height:350px}.room-overlay{left:25px;bottom:25px}.dining-grid{grid-template-columns:1fr}.dining-img{height:235px}.dining-info p{min-height:auto}.app-feature-inner{gap:0}.app-feature-copy{padding:70px 0 45px}.app-feature h2{font-size:43px}.app-phone{margin-bottom:0;transform:rotate(4deg) translateY(85px)}.experience-grid{grid-template-columns:1fr;gap:22px}.footer-upper{grid-template-columns:1fr 1fr;gap:36px}.footer-upper>div:first-child{grid-column:span 2}.footer-bottom{font-size:10px}.order-nav{gap:9px}.order-nav a{font-size:11px}.order-nav .staff-link{display:none}.order-intro h1{font-size:44px}.menu-grid{gap:12px}.menu-card-image{height:132px}.menu-card-body{padding:13px}.menu-card h3{font-size:17px}.menu-card p{font-size:11px}.menu-card-bottom{gap:5px}.menu-card-bottom strong{font-size:11px}.add-item{min-width:30px;height:30px}.staff-main{padding-top:25px}.login-art{min-height:220px}.login-art-inner{padding:30px}.login-art h1{font-size:39px}.login-box{padding:35px 25px}.login-box h2{font-size:40px}.dashboard-heading{align-items:start;flex-direction:column}.dashboard-heading h1{font-size:44px}.stats-grid{gap:10px}.stats-grid article{padding:15px}.stats-grid strong{font-size:26px}.view-heading{align-items:start;flex-direction:column;gap:15px}.inventory-search{width:100%}.inventory-search input{width:100%}.success-card{padding:27px 20px}.success-card h2{font-size:34px}}
 @media(max-width:390px){.brand-words{font-size:12px}.order-nav a{font-size:10px}.install-button{font-size:10px;padding:8px}.menu-grid{grid-template-columns:1fr}.menu-card{display:grid;grid-template-columns:115px 1fr}.menu-card-image{height:100%;min-height:148px}.menu-card-body{padding:12px}.menu-card h3{font-size:17px}.menu-card p{margin-bottom:10px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+/* v2: sticky navigation, dedicated kitchen queue and M-Pesa checkout */
+.site-header{position:sticky;top:0;z-index:95;box-shadow:0 2px 14px rgba(15,37,29,.045)}
+html{scroll-padding-top:110px}
+.success-modal{z-index:150}
+.mpesa-form{display:grid;gap:12px;text-align:left;margin:20px 0}
+.mpesa-form label{display:block;font-size:12px;font-weight:700;color:var(--forest)}
+.mpesa-form input{display:block;width:100%;margin-top:8px;padding:14px;border:1px solid #cdd8c9;background:white;color:var(--forest);border-radius:0}
+.mpesa-form .button{width:100%}
+.mpesa-instructions{background:#f1efe0;border:1px solid #e2d5b4;padding:16px;color:#64512d;font-size:13px;line-height:1.75;margin:12px 0}
+.payment-hint{color:#7f765c;font-size:11px;line-height:1.6;margin:0}
+.payment-outcome{font-size:13px;color:#285a3d;font-weight:700;line-height:1.7}
+.payment-security-note{border-top:1px solid var(--line);padding-top:16px;margin-top:25px;font-size:10px!important;line-height:1.6}
+.demo-approve{width:100%;margin-top:10px}
+.success-card{max-height:calc(100vh - 32px);overflow-y:auto}
+.staff-identity{font-size:11px;color:#657d6b}
+.dashboard-tabs{overflow-x:auto;white-space:nowrap}
+.kitchen-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.kitchen-ticket{background:#fff;border-left:5px solid #c29453;box-shadow:0 8px 25px #16332712;padding:23px;display:flex;flex-direction:column;min-height:230px}
+.kitchen-ticket.preparing{border-color:#3481a4}.kitchen-ticket.ready{border-color:#389362}
+.kitchen-top{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.kitchen-top strong{font-size:13px}.kitchen-top span{color:#8c9b90;font-size:11px}
+.kitchen-ticket h3{font:500 25px var(--serif);margin:17px 0 3px}
+.kitchen-items{margin:18px 0;font-size:14px;color:#405647;flex:1;line-height:1.9}
+.kitchen-ticket button{background:var(--forest);color:white;border:none;padding:12px;text-align:center;font-size:12px;font-weight:700}
+.kitchen-ticket button:disabled{opacity:.45}
+.kitchen-payment{font-size:11px;color:#9b683d;font-weight:700}
+.team-form{display:grid;grid-template-columns:1fr 1fr 1fr auto;align-items:end;gap:12px;background:white;padding:22px;border:1px solid var(--line);margin-bottom:24px}
+.team-form label{font-size:11px;font-weight:700;color:#667a68}
+.team-form input,.team-form select{width:100%;display:block;border:1px solid #d7e2d5;padding:13px;margin-top:5px;min-height:45px}
+.team-form .button{min-height:45px}
+.team-list{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.team-member{background:white;border:1px solid var(--line);padding:17px;display:flex;justify-content:space-between;align-items:center;gap:15px}
+.team-member strong{display:block;font-size:13px}
+.team-member small{display:block;color:#8c998a;font-size:11px;text-transform:capitalize;margin-top:4px}
+.team-member button{background:#eef2eb;border:1px solid #dae3d8;padding:9px 12px;font-size:11px;font-weight:700}
+@media(max-width:1050px){.kitchen-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.team-form{grid-template-columns:1fr 1fr}.team-form .button{grid-column:span 2}}
+@media(max-width:650px){.kitchen-grid,.team-list,.team-form{grid-template-columns:1fr}.team-form .button{grid-column:span 1}.dashboard-actions{flex-wrap:wrap}.success-actions{gap:12px}}
