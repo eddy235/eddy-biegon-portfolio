@@ -71,7 +71,7 @@ const serviceEnquiries={
   'business-websites':['Business websites','I would like a quote for a business website. My business is: \nPages or features I need: \nPreferred timeline: '],
   'internal-business-tools':['Internal business tools','I would like a quote for an internal business tool. The workflow I want to improve is: \nWho will use it: \nPreferred timeline: '],
   'python-application-support':['Python application support','I need help with a Python application. The task or issue is: \nMy current setup: \nPreferred timeline: '],
-  'website-maintenance':['Website maintenance','I am interested in monthly website maintenance at KSh 3,000 (approximately US$23.08). My website is: \nMy maintenance needs are: ']
+  'website-maintenance':['Annual website maintenance','I am interested in yearly website maintenance at KSh 36,000 (approximately US$277.01 per year). My website is: \nMy maintenance needs are: ']
 };
 if(form){const service=serviceEnquiries[new URLSearchParams(location.search).get('service')];if(service){const note=qs('#service-enquiry-note');if(note){note.textContent='Enquiring about: '+service[0];note.hidden=false;}const message=qs('#contact-message');if(message&&!message.value)message.value=service[1];}}
 if(form){form.addEventListener('submit',e=>{e.preventDefault();const fd=new FormData(form);const name=fd.get('name')||'there',msg=fd.get('message')||'I would like to connect.',email=String(fd.get('email')||'').trim();const url=`https://wa.me/254717697883?text=${encodeURIComponent(`Hi Eddy, I’m ${name}. ${msg}${email?' Email: '+email:''}`)}`;window.open(url,'_blank','noopener');});}
