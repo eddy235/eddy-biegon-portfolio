@@ -1,0 +1,82 @@
+# Tulia Care — Mobile Clinic Check-in + Queue Management
+
+**Tulia Care is a fictional healthcare website and software portfolio demo.** It is **not** a working hospital, electronic health record, real patient registration service, appointment booking, medical advice, or emergency system.
+
+**Demo:** https://tulia-care-demo.onrender.com
+
+- [Clinic home](https://tulia-care-demo.onrender.com)
+- [Mobile registration / check-in](https://tulia-care-demo.onrender.com/register)
+- [My virtual queue ticket](https://tulia-care-demo.onrender.com/my-visit)
+- [Staff reception console](https://tulia-care-demo.onrender.com/reception)
+
+## Features
+
+**Mobile-first patient experience**
+- Responsive clinic marketing site with six fictional departments.
+- Patient registers a *fictional display alias* with explicit acknowledgement; no phone, email, DOB, ID number, symptoms, files or medical records are collected.
+- Secure random device-held demo access token rather than searchable record URLs.
+- Pre-check-in before travel, then **I have arrived** on the phone to join the queue; or immediately join when already on site.
+- Per-service daily ticket number (e.g., GEN-003), position in line and automatically refreshing status display (prechecked, waiting, called, completed, missed).
+- Patients can install the website as a progressive web app (PWA) on a supported phone browser. Internet is required for registration, check-in and live queues.
+
+**Reception / staff**
+- Password-protected dashboard, live queue counters, service tabs, staff call-next action and no-show, restore, completed controls.
+- First-in-first-out queue per service with atomic SQLite writes, duplicate-active-ticket prevention, one active called visitor per department enforced in transaction.
+- Synthetic demo visitors seeded to make the workflow demonstrable.
+- Public aggregated queue counts never expose visitor names. The protected dashboard uses fictional aliases only.
+
+**Security**
+- Access tokens are generated with cryptographically secure randomness, stored as SHA-256 hashes in the database and saved in the patient's browser's local storage.
+- Staff sessions use signed, HttpOnly, Secure, SameSite=Strict cookies. Throttled patient registrations and staff login.
+- Mutation-origin checks, parameterized queries, CSP, restricted referrer policy and no-store API responses.
+- Tests cover authentication, patient token isolation, queue transitions, duplicate tickets, pre-check-in and arrival.
+
+## Run locally
+
+From the repository root:
+
+\`\`\`bash
+python -m pip install -r requirements.txt
+export CLINIC_STAFF_PASSWORD='your-strong-demo-password'
+export CLINIC_COOKIE_SECURE=0
+export CLINIC_DB='/tmp/tulia-local.sqlite3'
+uvicorn clinic.app:app --reload
+\`\`\`
+
+For Windows PowerShell, set variables using \`$env:CLINIC_STAFF_PASSWORD="..."\`. Do not enable staff access without a configured secret password.
+
+Run tests:
+
+\`\`\`bash
+python -m unittest clinic.tests.test_clinic -v
+node --check clinic/static/app.js
+\`\`\`
+
+## Deploy on Render
+
+Deploy a **separate free Python web service** from \`https://github.com/eddy235/eddy-biegon-portfolio\`, branch \`main\`:
+
+- Build: \`pip install -r requirements.txt\`
+- Start: \`uvicorn clinic.app:app --host 0.0.0.0 --port $PORT\`
+- Environment: \`CLINIC_STAFF_PASSWORD\` = a strong, unique, private demo password
+- Environment: \`CLINIC_SECRET\` = cryptographically secure long random string
+- Health check: \`/health\`
+- Region: \`frankfurt\`
+- \`CLINIC_SEED_DEMO=1\` enables purely fictional demonstration queue records.
+
+**Free instance storage is ephemeral.** Check-ins reset on redeploy, restart or instance recycling. This is a demonstrative UI/API only.
+
+## Real-world deployment requirements
+
+**Do not use this demo with real patient or medical data.** A production facility requires, at minimum:
+
+1. Identity verification and secure account recovery (verified SMS OTP/clinic-generated invitation tokens), explicit data collection and retention policies, confidentiality and audit logs.
+2. Kenya's healthcare privacy and data protection compliance review, DPIA where required, secure encrypted databases with backups, healthcare-access roles and least privilege.
+3. Durable PostgreSQL (and recovery procedures), secure multi-clinic tenancy, monitored uptime, escalation paths and safe fallback for downtime.
+4. On-site QR, kiosk, or staffed arrival verification to prevent off-site queue abuse; operational policies for late arrivals, accessibility and visitors who do not own smartphones.
+5. SMS/email notifications only with actual provider integrations and valid opt-ins. Consent and clinical data processes must be designed and assessed by qualified healthcare/security professionals.
+6. Emergency triage **must never be placed in a first-in-first-out appointment queue**. Urgent patients must receive immediate clinical assessment through the hospital's established pathways.
+7. Queuing ≠ clinical triage: this demo's FIFO system is only suitable for routine, non-emergency administrative scheduling.
+8. No ETA is promised, as clinician availability and severity can change.
+
+No real patients, diagnoses, claims, prescriptions, lab results, medical workflows or payments are processed.

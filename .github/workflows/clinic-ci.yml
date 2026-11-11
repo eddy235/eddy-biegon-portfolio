@@ -1,0 +1,35 @@
+name: Tulia Care clinic demo CI
+on:
+  push:
+    paths:
+      - "clinic/**"
+      - ".github/workflows/clinic-ci.yml"
+      - "requirements.txt"
+  pull_request:
+    paths:
+      - "clinic/**"
+      - ".github/workflows/clinic-ci.yml"
+      - "requirements.txt"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install test dependencies
+        run: |
+          python -m pip install -r requirements.txt
+      - name: Check JavaScript syntax
+        run: node --check clinic/static/app.js
+      - name: Compile and test queue workflows
+        run: |
+          python -m compileall -q clinic
+          python -m unittest clinic.tests.test_clinic -v
