@@ -95,3 +95,8 @@ Contact inputs have visible labels, and the optional email is included in the Wh
 ## Maison Sanaa hospitality suite
 
 The [Maison Sanaa demo](https://maison-sanaa-demo.onrender.com/) is a fictional boutique hotel site, installable mobile restaurant ordering PWA and password-protected staff inventory dashboard. Source and setup: [`hospitality/`](hospitality/README.md). It runs as a separate Render web service from this monorepo. Data on the free demo service is ephemeral.
+
+
+## Tulia Care clinic digital check-in
+
+[Tulia Care](https://tulia-care-demo.onrender.com) is a fictional clinic portal with mobile registration, pre-check-in, on-site arrival confirmation, private virtual queue tickets, live queue positions and a password-protected reception dashboard to call the next visitor. Source, setup, tests and security limitations: [`clinic/`](clinic/README.md). It is hosted as a separate Render web service from this portfolio monorepo. **Demo aliases only — never enter real patient or medical information.**
