@@ -3,10 +3,10 @@
 An independent **full-stack hospitality demo** within the Eddy Biegon portfolio repository. Fictional boutique hotel, restaurant, mobile ordering experience and staff inventory dashboard.
 
 ## Live experiences
-- Hotel landing page: \`/\`
-- Installable ordering web app: \`/order\`
-- Staff dashboard: \`/staff\` (requires a password supplied in deployment secrets)
-- Health endpoint: \`/health\`
+- Hotel landing page: `/`
+- Installable ordering web app: `/order`
+- Staff dashboard: `/staff` (requires a password supplied in deployment secrets)
+- Health endpoint: `/health`
 
 ## What works
 - Fourteen fictional food and drink menu items, with search and categories.
@@ -20,28 +20,28 @@ An independent **full-stack hospitality demo** within the Eddy Biegon portfolio 
 ## Run locally
 Use Python 3.11 or newer. From the **repository root**:
 
-\`\`\`bash
+```bash
 python -m pip install -r requirements.txt
 HOSPITALITY_ADMIN_PASSWORD='a-long-random-password' HOSPITALITY_COOKIE_SECURE=0 uvicorn hospitality.app:app --reload
-\`\`\`
+```
 
 Windows PowerShell:
 
-\`\`\`powershell
+```powershell
 $env:HOSPITALITY_ADMIN_PASSWORD='a-long-random-password'
 $env:HOSPITALITY_COOKIE_SECURE='0'
 uvicorn hospitality.app:app --reload
-\`\`\`
+```
 
-The dev database defaults to \`/tmp/maison_sanaa_demo.sqlite3\` (set \`HOSPITALITY_DB\` to override). For production, configure durable database storage before relying on orders. Render free instances use **ephemeral** storage and can reset inventory and orders on restart or redeploy.
+The dev database defaults to `/tmp/maison_sanaa_demo.sqlite3` (set `HOSPITALITY_DB` to override). For production, configure durable database storage before relying on orders. Render free instances use **ephemeral** storage and can reset inventory and orders on restart or redeploy.
 
 ## Render deployment
-Source: \`https://github.com/eddy235/eddy-biegon-portfolio\`; branch: \`main\`.
+Source: `https://github.com/eddy235/eddy-biegon-portfolio`; branch: `main`.
 - Runtime: Python
-- Build: \`pip install -r requirements.txt\`
-- Start: \`uvicorn hospitality.app:app --host 0.0.0.0 --port $PORT\`
-- Required secrets: \`HOSPITALITY_ADMIN_PASSWORD\` and \`HOSPITALITY_SECRET\` (long, random values)
-- Set \`HOSPITALITY_COOKIE_SECURE=1\` for HTTPS.
+- Build: `pip install -r requirements.txt`
+- Start: `uvicorn hospitality.app:app --host 0.0.0.0 --port $PORT`
+- Required secrets: `HOSPITALITY_ADMIN_PASSWORD` and `HOSPITALITY_SECRET` (long, random values)
+- Set `HOSPITALITY_COOKIE_SECURE=1` for HTTPS.
 
 ## Security and limitations
 The demo has staff password authentication, HttpOnly/SameSite session cookies, login throttling, data validation, same-origin mutations, non-enumerable order lookup codes and atomic stock changes. It is **not a production hotel POS**: persistent Postgres storage, individual staff accounts, CSRF tokens, payments, backups, audit retention, privacy/security review and real integrations are needed before a real launch.

@@ -67,6 +67,13 @@ class HospitalityTests(unittest.TestCase):
         self.assertEqual(response.status_code, 422)
         self.assertEqual(before, client.get("/api/staff/snapshot").json()["stock"])
 
+    def test_045_blank_guest_name(self):
+        response = client.post("/api/orders", json={
+            "guest_name":"   ", "delivery_type":"room","location":"204",
+            "items":[{"id":"swahili-breakfast","quantity":1}]
+        })
+        self.assertEqual(response.status_code, 422)
+
     def test_05_order_status_transitions(self):
         record = client.get("/api/staff/snapshot").json()["orders"][0]
         path = "/api/staff/orders/" + str(record["id"]) + "/status"

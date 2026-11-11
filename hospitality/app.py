@@ -11,6 +11,7 @@ import time
 from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
+from urllib.parse import urlsplit
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse, JSONResponse
@@ -192,6 +193,8 @@ class NewOrder(BaseModel):
 
 @app.post("/api/orders", status_code=201)
 def create_order(payload: NewOrder):
+    if len(payload.guest_name.strip()) < 2:
+        raise HTTPException(422, "Guest name is required")
     if payload.delivery_type not in ("room", "table", "pickup"):
         raise HTTPException(422, "Choose room, table or pickup")
     if not re.fullmatch(r"[\w -]{1,30}", payload.location, flags=re.UNICODE):
@@ -272,7 +275,7 @@ def require_staff(request: Request):
     if not authenticated(request):
         raise HTTPException(401, "Staff login required")
     origin = request.headers.get("origin")
-    if request.method != "GET" and origin and origin != str(request.base_url).rstrip("/"):
+    if request.method != "GET" and origin and urlsplit(origin).hostname != request.url.hostname:
         raise HTTPException(403, "Invalid request origin")
 
 class Login(BaseModel):
