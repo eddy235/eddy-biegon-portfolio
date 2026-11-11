@@ -36,7 +36,7 @@ class HospitalityTests(unittest.TestCase):
         self.assertEqual(client.post("/api/staff/login", json={"password":"wrong"}).status_code, 401)
         response = client.post("/api/staff/login", json={"password":"test-private-password"})
         self.assertEqual(response.status_code, 200)
-        self.assertIn("maison_staff", client.cookies)
+        self.assertIn("maison_staff_v2", client.cookies)
         self.assertEqual(client.get("/api/staff/snapshot").status_code, 200)
 
     def test_03_server_calculated_order_and_stock_deduction(self):
@@ -90,6 +90,44 @@ class HospitalityTests(unittest.TestCase):
         self.assertEqual(client.post(path, json={"delta":5,"reason":"Test replenishment"}).status_code, 200)
         after = {x["id"]:x["quantity"] for x in client.get("/api/staff/snapshot").json()["stock"]}
         self.assertEqual(after["milk"], before["milk"] + 5)
+
+    def test_065_mpesa_demo_prompt_and_staff_accounts(self):
+        order = client.post("/api/orders", json={
+            "guest_name":"Payment Test", "delivery_type":"table",
+            "location":"T3", "items":[{"id":"passion-cooler","quantity":1}]
+        })
+        self.assertEqual(order.status_code, 201)
+        code = order.json()["code"]
+        invalid = client.post("/api/payments/mpesa/initiate", json={"code":code,"phone":"999"})
+        self.assertEqual(invalid.status_code, 422)
+        prompt = client.post("/api/payments/mpesa/initiate", json={"code":code,"phone":"0712345678"})
+        self.assertEqual(prompt.status_code, 200, prompt.text)
+        self.assertEqual(prompt.json()["mode"], "demo")
+        self.assertEqual(prompt.json()["status"], "demo_pending")
+        self.assertEqual(client.get("/api/payments/mpesa/status/"+code).json()["payment_status"], "pending")
+        confirmed = client.post("/api/payments/mpesa/confirm-demo", json={
+            "code":code,"payment_id":prompt.json()["payment_id"]
+        })
+        self.assertEqual(confirmed.status_code, 200, confirmed.text)
+        self.assertEqual(client.get("/api/orders/"+code).json()["payment_status"], "demo_paid")
+        self.assertEqual(client.post("/api/payments/mpesa/confirm-demo", json={
+            "code":code,"payment_id":prompt.json()["payment_id"]
+        }).status_code, 409)
+        created=client.post("/api/staff/users", json={
+            "username":"chef-test","password":"very-long-test-password","role":"kitchen"
+        })
+        self.assertEqual(created.status_code, 201,created.text)
+        self.assertEqual(client.get("/api/staff/users").status_code,200)
+        self.assertEqual(client.post("/api/staff/logout").status_code,200)
+        kitchen_login=client.post("/api/staff/login",json={
+            "username":"chef-test","password":"very-long-test-password"
+        })
+        self.assertEqual(kitchen_login.status_code,200,kitchen_login.text)
+        self.assertEqual(client.get("/api/staff/snapshot").json()["user"]["role"],"kitchen")
+        self.assertEqual(client.post("/api/staff/inventory/milk",json={"delta":1,"reason":"Unauthorized restock"}).status_code,403)
+        self.assertEqual(client.get("/api/staff/users").status_code,403)
+        client.post("/api/staff/logout")
+        client.post("/api/staff/login",json={"username":"manager","password":"test-private-password"})
 
     def test_07_logout(self):
         self.assertEqual(client.post("/api/staff/logout").status_code, 200)
