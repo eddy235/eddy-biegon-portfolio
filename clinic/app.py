@@ -185,8 +185,12 @@ def safe_visit(con,patient_id):
     service=SERVICE_MAP.get(result["service_id"])
     result["service_name"]=service["name"] if service else result["service_id"]
     if result["status"]=="waiting":
+        # Queue position must use the same arrival-time ordering as staff call-next,
+        # including when reception restores an earlier missed ticket at the end.
         ahead=con.execute("""SELECT COUNT(*) FROM visits WHERE day=? AND service_id=? AND status='waiting'
-                              AND id<?""",(result["day"],result["service_id"],result["id"])).fetchone()[0]
+                              AND (arrived_at<? OR (arrived_at=? AND id<?))""",
+            (result["day"],result["service_id"],result["arrived_at"],
+             result["arrived_at"],result["id"])).fetchone()[0]
         result["people_ahead"]=ahead
         result["position"]=ahead+1
     else:
