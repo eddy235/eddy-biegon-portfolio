@@ -21,7 +21,7 @@ def check(origin):
 
     status, _, raw = get("/health")
     assert status == 200 and json.loads(raw) == {"status":"ok","read_only":True}, "Incorrect public read-only mode"
-    for path in ("/", "/projects.html", "/cyberlab.html", "/styles.css", "/script.js", "/EDDY_BIEGON_CV.docx"):
+    for path in ("/", "/projects.html", "/cyberlab.html", "/game.html", "/styles.css", "/script.js", "/EDDY_BIEGON_CV.docx"):
         status, _, _ = get(path)
         assert status == 200, f"Public page/resource failed: {path} HTTP {status}"
     status, _, raw = get("/api/projects")

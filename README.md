@@ -13,10 +13,10 @@ As of initial import, the public Render URL remains online. **Render may still r
 
 ## Highlights
 
-- Home, projects, experience, about, certifications, Cyber Lab, and contact pages.
+- A compact homepage plus projects, experience, about, certifications, Cyber Lab, contact and a dedicated game page.
 - Featured NexusDesk and SecureScan project cards, with live demos and GitHub links.
 - GitHub activity integration, project search/filtering and quick views.
-- Cyber Lab gallery and browser-based Packet Defender mini-game.
+- Cyber Lab gallery and Packet Defender at `/game.html`, reached from the red pulsing navigation button.
 - Theme switching and mobile-responsive visual design.
 - A local, editable CMS supporting projects, certifications and Cyber Lab records.
 - Automated regression checks and a read-only public deployment mode.
@@ -80,3 +80,9 @@ The verification checks pages, assets, public project records, health, and admin
 ## Privacy and security
 
 Do not commit `.env`, `portfolio.db`, passwords, or operational data. The public hosted CMS is intentionally **read-only** to prevent account takeover via first-run setup and to avoid persistence risks. The public CV is purposefully downloadable. This is a portfolio application, not a production-hardened multi-user CMS.
+
+
+## November 2026 usability update
+The homepage is a compact introduction with two selected project links, projects/contact buttons and CV access. Detailed capabilities and the GitHub feed remain on About. At the tested desktop viewport, the full homepage fits without vertical scrolling; narrow layouts use responsive cards and a collapsible navigation menu.
+Packet Defender is on `/game.html`; `/game` and `/packet-defender` redirect there. The red navigation button pulses gently and stops animating when reduced motion is requested. Explicit SAFE/THREAT text, keyboard controls and a Stop button improve game access.
+Contact inputs have visible labels, and the optional email is included in the WhatsApp message draft.

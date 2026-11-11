@@ -23,10 +23,15 @@ class PortfolioReleaseTests(unittest.TestCase):
         shutil.rmtree(_TMP, ignore_errors=True)
 
     def test_pages_assets_and_game_preserved(self):
-        for route in ('/', '/index.html', '/projects.html', '/cyberlab.html', '/about.html', '/contact.html', '/styles.css', '/script.js', '/EDDY_BIEGON_CV.docx'):
+        for route in ('/', '/index.html', '/projects.html', '/cyberlab.html', '/about.html', '/contact.html', '/game.html', '/styles.css', '/script.js', '/EDDY_BIEGON_CV.docx'):
             self.assertEqual(self.client.get(route).status_code, 200, route)
         html=self.client.get('/').text
-        self.assertIn('Packet Defender', html)
+        self.assertIn('href="game.html"', html)
+        self.assertNotIn('id="packet-grid"', html)
+        game=self.client.get('/game.html').text
+        self.assertIn('id="packet-grid"', game)
+        self.assertIn('id="game-start"', game)
+        self.assertIn('id="game-stop"', game)
         self.assertIn('nexusdesk-demo.onrender.com', html)
         self.assertIn('securescan-demo.onrender.com', html)
 
@@ -49,3 +54,17 @@ class PortfolioReleaseTests(unittest.TestCase):
         self.assertEqual(self.client.get('/').headers.get('x-content-type-options'), 'nosniff')
 
 if __name__ == '__main__': unittest.main()
+
+
+class NavigationTests(unittest.TestCase):
+    def test_game_navigation_and_legacy_routes(self):
+        with TestClient(portfolio.app) as client:
+            for page in ['index','about','experience','projects','cyberlab','certifications','contact','game']:
+                html=client.get('/'+page+'.html').text
+                self.assertIn('class="nav-game"',html)
+                self.assertIn('href="game.html"',html)
+                self.assertIn('aria-controls="primary-navigation"',html)
+            for route in ['/game','/packet-defender']:
+                result=client.get(route)
+                self.assertEqual(result.status_code,200)
+                self.assertIn('id="packet-grid"',result.text)
