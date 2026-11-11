@@ -54,3 +54,5 @@ html{scroll-padding-top:110px}
 .team-member button{background:#eef2eb;border:1px solid #dae3d8;padding:9px 12px;font-size:11px;font-weight:700}
 @media(max-width:1050px){.kitchen-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.team-form{grid-template-columns:1fr 1fr}.team-form .button{grid-column:span 2}}
 @media(max-width:650px){.kitchen-grid,.team-list,.team-form{grid-template-columns:1fr}.team-form .button{grid-column:span 1}.dashboard-actions{flex-wrap:wrap}.success-actions{gap:12px}}
+
+.staff-database{font-size:10px;font-weight:700;color:#75633b;background:#f0ead6;padding:8px 10px;border-radius:12px}

@@ -392,6 +392,14 @@ function initStaffApp() {
     snapshot = null;
     showDashboard(false);
   });
+  api("/health").then(info => {
+    const database=$("database-status");
+    if(database)database.textContent=info.database==="postgresql" ?
+      "PostgreSQL connected" : "Temporary SQLite storage";
+  }).catch(() => {
+    const database=$("database-status");
+    if(database)database.textContent="Storage status unavailable";
+  });
   $("refresh-dashboard").addEventListener("click", async () => {
     await refresh();
     notify("Dashboard updated.", false);
