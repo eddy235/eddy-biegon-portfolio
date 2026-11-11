@@ -13,6 +13,7 @@ import re
 import secrets
 import time
 from collections import defaultdict
+from decimal import Decimal, InvalidOperation
 from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import urlsplit
@@ -437,7 +438,10 @@ class InitiatePayment(BaseModel):
 
 @app.get("/api/payments/config")
 def payment_configuration():
-    return {"mode":MPESA_MODE,"real_prompt_available":MPESA_MODE!="demo"}
+    configured = MPESA_MODE!="demo" and all(os.getenv(k) for k in (
+        "MPESA_CONSUMER_KEY", "MPESA_CONSUMER_SECRET", "MPESA_SHORTCODE",
+        "MPESA_PASSKEY", "MPESA_CALLBACK_URL", "MPESA_CALLBACK_TOKEN"))
+    return {"mode":MPESA_MODE,"real_prompt_available":bool(configured)}
 
 @app.post("/api/payments/mpesa/initiate")
 def initiate_mpesa(payload:InitiatePayment,request:Request):
@@ -530,7 +534,10 @@ async def mpesa_callback(token:str,request:Request):
         verified=False
     metadata=result.get("CallbackMetadata",{}).get("Item",[]) or []
     values={str(i.get("Name")):i.get("Value") for i in metadata if isinstance(i,dict)}
-    amount_matches=str(values.get("Amount","")) in (str(order["total"]),str(float(order["total"])))
+    try:
+        amount_matches=Decimal(str(values.get("Amount"))) == Decimal(str(order["total"]))
+    except (InvalidOperation, TypeError):
+        amount_matches=False
     receipt=str(values.get("MpesaReceiptNumber","")).strip()
     if not verified or not amount_matches or not receipt:
         # Leave payment pending until reconciled, rather than trusting unverified webhook data.
