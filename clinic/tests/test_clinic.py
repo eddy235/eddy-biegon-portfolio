@@ -34,7 +34,7 @@ class ClinicTests(unittest.TestCase):
         for path in ("/","/register","/my-visit","/reception"):
             response=self.client.get(path)
             self.assertEqual(response.status_code,200,response.text)
-            self.assertIn("TuliaCare",response.text)
+            self.assertIn("Tulia Care",response.text)
         services=self.client.get("/api/services")
         self.assertEqual(len(services.json()),6)
         self.assertEqual(services.headers["cache-control"],"no-store")
