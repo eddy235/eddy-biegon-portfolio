@@ -3,7 +3,7 @@
 A full-stack personal portfolio built with **FastAPI, HTML, CSS, JavaScript and SQLite**, featuring the v6 blue/black/red interface, responsive pages, dynamic public content, GitHub activity feed, project filters and quick views, theme switching, and an interactive **Packet Defender** cybersecurity mini-game.
 
 **Live portfolio:** https://eddy-biegon-portfolio.onrender.com/  
-**Featured projects:** [NexusDesk](https://nexusdesk-demo.onrender.com/demo/) · [SecureScan](https://securescan-demo.onrender.com/)
+**Featured projects:** [NexusDesk](https://nexusdesk-demo.onrender.com/demo/) · [SecureScan](https://securescan-demo.onrender.com/) · [Maison Sanaa](https://maison-sanaa-demo.onrender.com/)
 
 ## About this repository
 
@@ -90,3 +90,8 @@ Contact inputs have visible labels, and the optional email is included in the Wh
 
 ## Services and pricing
 `/services.html` (also `/services`) lists business websites from KSh 35,000, internal business tools from KSh 80,000 and Python application support from KSh 25,000. Optional website maintenance is KSh 36,000 per year (12 × the previous KSh 3,000 monthly fee); maintenance tasks retain their existing monthly cadence. USD figures are indicative conversions using the CBK rate of KSh 129.96/USD dated 10 November 2026; update the page's figures and dated source note together when repricing. Package links select the relevant enquiry on Contact, using a fixed list of service identifiers. No enquiry is submitted until the visitor continues on WhatsApp and sends it there.
+
+
+## Maison Sanaa hospitality suite
+
+The [Maison Sanaa demo](https://maison-sanaa-demo.onrender.com/) is a fictional boutique hotel site, installable mobile restaurant ordering PWA and password-protected staff inventory dashboard. Source and setup: [`hospitality/`](hospitality/README.md). It runs as a separate Render web service from this monorepo. Data on the free demo service is ephemeral.

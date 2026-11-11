@@ -183,6 +183,7 @@ def init_db():
             )
         # Idempotently ensure the two portfolio projects exist in older CMS databases.
         additional = [
+            ("Maison Sanaa — Hotel & Restaurant Suite", "Full-stack / Hospitality", "Hotel site, sample food and drinks, installable mobile ordering PWA, server-side orders and recipe-based inventory, plus staff dashboard. Source: github.com/eddy235/eddy-biegon-portfolio/tree/main/hospitality", "web", "Python,FastAPI,PWA,SQLite,Inventory,Hospitality,Render", "https://maison-sanaa-demo.onrender.com/", 1, 35),
             ("SecureScan — Website Security Auditor", "Cybersecurity / DevSecOps", "FastAPI website security auditor with risk findings, dashboards and a safe demo. GitHub: github.com/eddy235/SecureScan", "security", "Python,FastAPI,JavaScript,Docker,GitHub Actions,Render", "https://securescan-demo.onrender.com/", 1, 30),
             ("NexusDesk — IT Service Management", "Full-stack / IT Operations", "Django helpdesk with tickets, SLAs, IT inventory and staff reporting. GitHub: github.com/eddy235/NexusDesk", "web", "Python,Django,IT Support,Asset Management,GitHub Actions,Render", "https://nexusdesk-demo.onrender.com/demo/", 1, 40),
         ]
