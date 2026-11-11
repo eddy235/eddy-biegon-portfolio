@@ -183,7 +183,7 @@ def init_db():
             )
         # Idempotently ensure the two portfolio projects exist in older CMS databases.
         additional = [
-            ("Tulia Care — Clinic Check-in & Virtual Queue", "Full-stack / Healthcare IT", "Responsive fictional clinic website with patient self-registration, mobile pre-check-in, QR-ready virtual queue tracking and a password-protected staff reception console. GitHub: github.com/eddy235/eddy-biegon-portfolio/tree/main/clinic", "web", "Python,FastAPI,JavaScript,PWA,Healthcare,Queue Management,SQLite,Render", "https://tulia-care-demo.onrender.com/", 1, 36),
+            ("Tulia Care — Clinic Check-in & Virtual Queue", "Full-stack / Healthcare IT", "Responsive fictional clinic website with patient self-registration, mobile pre-check-in, private virtual queue tracking and a password-protected staff reception console. GitHub: github.com/eddy235/eddy-biegon-portfolio/tree/main/clinic", "web", "Python,FastAPI,JavaScript,PWA,Healthcare,Queue Management,SQLite,Render", "", 1, 36),
             ("Maison Sanaa — Hotel & Restaurant Suite", "Full-stack / Hospitality", "Hotel site, sample food and drinks, installable mobile ordering PWA, server-side orders and recipe-based inventory, plus staff dashboard. Source: github.com/eddy235/eddy-biegon-portfolio/tree/main/hospitality", "web", "Python,FastAPI,PWA,SQLite,Inventory,Hospitality,Render", "https://maison-sanaa-demo.onrender.com/", 1, 35),
             ("SecureScan — Website Security Auditor", "Cybersecurity / DevSecOps", "FastAPI website security auditor with risk findings, dashboards and a safe demo. GitHub: github.com/eddy235/SecureScan", "security", "Python,FastAPI,JavaScript,Docker,GitHub Actions,Render", "https://securescan-demo.onrender.com/", 1, 30),
             ("NexusDesk — IT Service Management", "Full-stack / IT Operations", "Django helpdesk with tickets, SLAs, IT inventory and staff reporting. GitHub: github.com/eddy235/NexusDesk", "web", "Python,Django,IT Support,Asset Management,GitHub Actions,Render", "https://nexusdesk-demo.onrender.com/demo/", 1, 40),
@@ -191,6 +191,8 @@ def init_db():
         for title, eyebrow, summary, category, tags, url, featured, order in additional:
             if not con.execute("SELECT 1 FROM projects WHERE title=? LIMIT 1", (title,)).fetchone():
                 con.execute("INSERT INTO projects(title,eyebrow,summary,category,tags,url,image_url,featured,sort_order) VALUES(?,?,?,?,?,?,?,?,?)", (title,eyebrow,summary,category,tags,url,"",featured,order))
+            elif title.startswith("Tulia Care"):
+                con.execute("UPDATE projects SET url=? WHERE title=?", (url,title))
         if con.execute("SELECT COUNT(*) FROM certifications").fetchone()[0] == 0:
             con.executemany(
                 "INSERT INTO certifications(title,issuer,date_text,summary,sort_order) VALUES(?,?,?,?,?)",
