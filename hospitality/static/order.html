@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#17332f"><meta name="description" content="Browse Maison Sanaa's fictional food and drink menu and place a demo order.">
+<title>Order Food & Drinks | Maison Sanaa</title><link rel="icon" href="/assets/icon.svg"><link rel="manifest" href="/manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/styles.css"><script defer src="/assets/app.js"></script></head>
+<body class="ordering-page">
+<a class="skip" href="#main">Skip to menu</a>
+<div class="demo-strip"><span>INTERACTIVE DEMO</span> Orders are simulated · No actual meals or payments</div>
+<header class="site-header order-header"><div class="container nav-bar">
+<a class="brand" href="/"><span class="brand-icon">M<span>✳</span></span><span class="brand-words">MAISON <b>SANAA</b><small>HOTEL &amp; DINING</small></span></a>
+<div class="order-nav"><a href="/">← Back to hotel</a><a href="/staff" class="staff-link">Staff portal ↗</a><button type="button" id="install-btn" class="install-button" hidden>Install app ↓</button></div></div></header>
+<main id="main" class="container ordering-layout">
+<div class="menu-column"><div class="order-intro"><span class="eyebrow">YOUR TABLE, YOUR WAY</span><h1>Good food. <em>Great moments.</em></h1><p>Something delicious is always close. Browse our kitchen favourites and refreshing drinks.</p></div>
+<div class="menu-controls"><label class="search-wrap" for="menu-search"><span aria-hidden="true">⌕</span><input id="menu-search" type="search" placeholder="Search dishes, drinks and flavours..." autocomplete="off"></label><div class="category-pills" role="group" aria-label="Menu categories" id="categories"></div></div>
+<div class="menu-subhead"><h2 id="menu-heading">Explore our menu</h2><span id="menu-count" class="muted">Loading menu…</span></div>
+<div id="menu-error" class="error-message" role="alert" hidden></div>
+<div id="menu-grid" class="menu-grid"><p class="muted">Preparing the menu…</p></div>
+<div class="menu-smallprint">All prices are illustrative and in Kenyan shillings. Images are for presentation only.</div>
+</div>
+<aside class="cart-column" aria-label="Shopping basket"><div class="cart-panel" id="cart-panel"><div class="cart-panel-heading"><div><span class="eyebrow">YOUR SELECTION</span><h2>Your basket <span class="cart-count" id="cart-count">0</span></h2></div><button class="close-cart" id="close-cart" type="button" aria-label="Close basket">✕</button></div><div class="cart-items" id="cart-items"><div class="empty-cart">Your next favourite starts here.</div></div>
+<div class="cart-totals"><div><span>Subtotal</span><b id="cart-subtotal">KSh 0</b></div><small>No payment is collected in this demo.</small></div>
+<form id="checkout-form" class="checkout-form"><h3>How would you like it?</h3>
+<label for="guest-name">Your name<input id="guest-name" name="guest_name" placeholder="Your name" minlength="2" maxlength="80" autocomplete="name" required></label>
+<label for="delivery-type">Service type<select id="delivery-type" name="delivery_type"><option value="room">Deliver to room</option><option value="table">Deliver to table</option><option value="pickup">Collect at restaurant</option></select></label>
+<label for="delivery-location"><span id="location-label">Room number</span><input id="delivery-location" name="location" placeholder="e.g. 204" maxlength="30" required></label>
+<label for="order-note">Special instructions <small>(optional)</small><textarea id="order-note" name="note" rows="2" maxlength="240" placeholder="Any dietary preferences or notes?"></textarea></label>
+<p id="checkout-error" class="form-error" role="alert" hidden></p><button class="button button-dark checkout-submit" id="place-order" type="submit" disabled>Place demo order <span>↗</span></button></form>
+<div class="cart-footer-note">Secure, fictional ordering demo · No payment taken</div></div></aside>
+</main>
+<button class="mobile-cart-fab" id="open-cart" type="button"><span>View basket <b id="mobile-cart-count">0</b></span><span id="mobile-cart-total">KSh 0 ↗</span></button><div class="cart-backdrop" id="cart-backdrop" hidden></div>
+<div id="success-modal" class="success-modal" hidden><div class="success-card" role="dialog" aria-modal="true" aria-labelledby="success-title"><div class="success-mark">✓</div><p class="eyebrow">SENT TO THE DEMO KITCHEN</p><h2 id="success-title">Order received!</h2><p>Your order has been created in the demo. Keep this tracking code to follow its progress.</p><div class="tracking-code" id="success-code"></div><p class="success-total" id="success-total"></p><div class="success-actions"><button class="button button-dark" id="track-new-order" type="button">Check order status ↗</button><button class="text-button" id="continue-ordering" type="button">Back to menu</button></div><div id="tracking-message" class="tracking-message" aria-live="polite"></div></div></div>
+<footer class="order-footer container">MAISON SANAA · <a href="/">Hotel home</a> · <a href="/staff">Staff dashboard</a> · Fictional demo</footer>
+</body></html>
