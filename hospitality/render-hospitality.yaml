@@ -1,0 +1,27 @@
+# Maison Sanaa hospitality demo — existing Render service + existing free Postgres.
+# Review the Blueprint plan before approving. Does not manage the main portfolio service.
+services:
+  - type: web
+    name: maison-sanaa-demo
+    repo: https://github.com/eddy235/eddy-biegon-portfolio
+    branch: main
+    runtime: python
+    region: frankfurt
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn hospitality.app:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: maison-sanaa-db
+          property: connectionString
+      - key: MPESA_MODE
+        value: demo
+      - key: HOSPITALITY_COOKIE_SECURE
+        value: "1"
+databases:
+  - name: maison-sanaa-db
+    region: frankfurt
+    plan: free
+    postgresMajorVersion: "17"
