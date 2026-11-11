@@ -1,0 +1,32 @@
+name: Hospitality demo CI
+on:
+  push:
+    paths:
+      - "hospitality/**"
+      - ".github/workflows/hospitality-ci.yml"
+  pull_request:
+    paths:
+      - "hospitality/**"
+      - ".github/workflows/hospitality-ci.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install dependencies
+        run: |
+          python -m pip install -r requirements.txt
+          python -m pip install httpx
+      - name: Compile and run hospitality tests
+        run: |
+          python -m compileall -q hospitality
+          python -m unittest hospitality.tests.test_hospitality -v
