@@ -115,6 +115,31 @@ class ClinicTests(unittest.TestCase):
         self.assertEqual(self.client.post("/api/staff/logout").status_code,200)
         self.assertEqual(self.client.get("/api/staff/overview").status_code,401)
 
+    def test_08_requeued_missed_visit_is_behind_current_arrivals(self):
+        first=self.register("Demo Visitor One")
+        second=self.register("Demo Visitor Two")
+        for token in (first,second):
+            self.assertEqual(self.client.post("/api/visits",
+                headers={"X-Patient-Token":token},
+                json={"service_id":"general","onsite":True}).status_code,201)
+        self.staff()
+        self.assertEqual(self.client.post("/api/staff/call-next",
+            json={"service_id":"general"}).json()["ticket"],"GEN-001")
+        visits=self.client.get("/api/staff/overview").json()["visits"]
+        called=next(v for v in visits if v["ticket"]=="GEN-001")
+        self.assertEqual(self.client.post(
+            f"/api/staff/visits/{called['id']}/status",
+            json={"status":"missed"}).status_code,200)
+        self.assertEqual(self.client.post(
+            f"/api/staff/visits/{called['id']}/status",
+            json={"status":"waiting"}).status_code,200)
+        first_visit=self.client.get("/api/me",headers={"X-Patient-Token":first}).json()["visit"]
+        second_visit=self.client.get("/api/me",headers={"X-Patient-Token":second}).json()["visit"]
+        self.assertEqual(first_visit["position"],2)
+        self.assertEqual(second_visit["position"],1)
+        self.assertEqual(self.client.post("/api/staff/call-next",
+            json={"service_id":"general"}).json()["ticket"],"GEN-002")
+
     def test_07_queue_scoping_and_duplicate_ticket_prevention(self):
         a=self.register("First Unique")
         b=self.register("Second Unique")
